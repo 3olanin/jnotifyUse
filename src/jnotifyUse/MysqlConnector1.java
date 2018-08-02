@@ -7,23 +7,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class MysqlConnector {
+public class MysqlConnector1 {
 	
-	private static MysqlConnector mc;
+	private static MysqlConnector1 mc;
     //声明Connection对象
     private  Connection con;
     //驱动程序名
     private String driver = "com.mysql.cj.jdbc.Driver";
     //URL指向要访问的数据库名mydata
-    //private String url = "jdbc:mysql://localhost:3306/file_receive?serverTimezone=GMT%2B8";
-    private String url = "jdbc:mysql://localhost:3306/data_receive?serverTimezone=GMT%2B8";
+    private String url = "jdbc:mysql://localhost:3306/data_receive?serverTimezone=GMT%2B8&autoReconnect=true";
     //MySQL配置时的用户名
     private String user = "root";
     //MySQL配置时的密码
-    //private String password = "";
-    private String password = "e6jSWVLNyAg0";
+    private String password = "";
+    //private String password = "e6jSWVLNyAg0";
     
-    private MysqlConnector (){
+    private MysqlConnector1 (){
 		try {
 			//加载驱动程序
             Class.forName(driver);
@@ -41,9 +40,9 @@ public class MysqlConnector {
 		}
     } 
     
-    public static synchronized MysqlConnector getInstance() {  
+    public static synchronized MysqlConnector1 getInstance() {  
         if (mc == null) {  
-            mc = new MysqlConnector();  
+            mc = new MysqlConnector1();  
         }  
         return mc;
     }
