@@ -9,6 +9,9 @@ import java.io.InputStreamReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import net.contentobjects.jnotify.JNotifyListener;
 
@@ -19,6 +22,7 @@ public class JNotifyListenerUse implements JNotifyListener{
     public void fileCreated(int wd, String rootPath, String name){
         System.err.println("create: --->" + wd + "--->" + rootPath + "--->" + name);
         long store_time = System.currentTimeMillis();
+        store_time = store_time/1000;
 		//get title
 		String title[] = name.split("_");
 		if(title.length!=8) {
@@ -27,18 +31,26 @@ public class JNotifyListenerUse implements JNotifyListener{
 		String T_mac = title[0];
 		String T_ip = title[1].split("\\[")[1].split("\\]")[0];
 		String T_date = title[2] + "-" + title[3] + "-" + title[4] + " " +
-						title[5] + ":" + title[6] + ":" + title[7].split("\\.")[0];		
+						title[5] + ":" + title[6] + ":" + title[7].split("\\.")[0];
+		long T_date_stamp = 0;
         MysqlConnector1 mc = MysqlConnector1.getInstance();
-        String sql = "INSERT INTO showdata_filepns(fileName,store_time,t_mac,t_ip,t_date) " +
-				 " VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO showdata_filepns(fileName,store_time,t_mac,t_ip,t_date,t_date_stamp) " +
+				 " VALUES(?,?,?,?,?,?)";
         PreparedStatement ps;
 		try {
+			try {
+				T_date_stamp = dateToStamp(T_date);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ps = mc.getPreparedStatement(sql);
 			ps.setString(1, name);
 			ps.setLong(2, store_time);
 			ps.setString(3, T_mac);
 			ps.setString(4, T_ip);
 			ps.setString(5, T_date);
+			ps.setLong(6, T_date_stamp);
 			ps.executeUpdate();
 		} catch (SQLException e2) {
 			// TODO Auto-generated catch block
@@ -82,6 +94,7 @@ public class JNotifyListenerUse implements JNotifyListener{
 				String C_imei;
 				String C_imsi;
 				String C_date;
+				long C_date_stamp = 0;
 				String C_rsrp;
 				String C_lon;
 				String C_lat;
@@ -91,6 +104,12 @@ public class JNotifyListenerUse implements JNotifyListener{
 					C_imei = content[0];
 					C_imsi = content[1];
 					C_date = content[2];
+					try {
+						C_date_stamp = dateToStamp(C_date);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					C_rsrp = content[3];
 					C_lon = content[4];
 					C_lat = content[5];
@@ -101,6 +120,12 @@ public class JNotifyListenerUse implements JNotifyListener{
 					C_imei = content[1];
 					C_imsi = content[2];
 					C_date = content[3];
+					try {
+						C_date_stamp = dateToStamp(C_date);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					C_rsrp = content[4];
 					C_lon = content[5];
 					C_lat = content[6];
@@ -114,22 +139,24 @@ public class JNotifyListenerUse implements JNotifyListener{
 				
 				//storing data into database
 				MysqlConnector1 mc1 = MysqlConnector1.getInstance();
-				sql = "INSERT INTO showdata_linepns(store_time,t_mac,t_ip,t_date,c_mac,c_imei,c_imsi,c_date,c_rsrp,c_lon,c_lat,c_isp,file_id) " +
-							 " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				sql = "INSERT INTO showdata_linepns(store_time,t_mac,t_ip,t_date,t_date_stamp,c_mac,c_imei,c_imsi,c_date,c_date_stamp,c_rsrp,c_lon,c_lat,c_isp,file_id) " +
+							 " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				ps = mc1.getPreparedStatement(sql);
 				ps.setLong(1, store_time);
 				ps.setString(2, T_mac);
 				ps.setString(3, T_ip);
 				ps.setString(4, T_date);
-				ps.setString(5, C_mac);
-				ps.setString(6, C_imei);
-				ps.setString(7, C_imsi);
-				ps.setString(8, C_date);
-				ps.setString(9, C_rsrp);
-				ps.setString(10, C_lon);
-				ps.setString(11, C_lat);
-				ps.setString(12, C_isp);
-				ps.setInt(13, fileid);
+				ps.setLong(5, T_date_stamp);
+				ps.setString(6, C_mac);
+				ps.setString(7, C_imei);
+				ps.setString(8, C_imsi);
+				ps.setString(9, C_date);
+				ps.setLong(10, C_date_stamp);
+				ps.setString(11, C_rsrp);
+				ps.setString(12, C_lon);
+				ps.setString(13, C_lat);
+				ps.setString(14, C_isp);
+				ps.setInt(15, fileid);
 				ps.executeUpdate();
 			}
 		} catch (IOException e) {
@@ -162,6 +189,16 @@ public class JNotifyListenerUse implements JNotifyListener{
     @Override
     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
         System.err.println("rename: --->" + wd + "--->" + rootPath + "--->" + oldName + "--->" + newName);
+    }
+    
+    public static long dateToStamp(String s) throws ParseException{
+        String res;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(s);
+        long ts = date.getTime()/1000;
+        //res = String.valueOf(ts);
+        //return res;
+        return ts;
     }
 }
 

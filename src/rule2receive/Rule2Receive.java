@@ -38,8 +38,8 @@ public class Rule2Receive {
     private static void watch() throws JNotifyException, InterruptedException {
  
         //要监控哪个目录
-        String path = "C:/Users/Lushaobin/Desktop";
-    	//String path = "/home/ftphome/ftpuser";
+        //String path = "C:/Users/Lushaobin/Desktop";
+    	String path = "/home/ftphome/ftpuser";
  
         //监控用户的操作，增，删，改，重命名
         int mask = JNotify.FILE_CREATED | JNotify.FILE_DELETED | JNotify.FILE_MODIFIED | JNotify.FILE_RENAMED ;
