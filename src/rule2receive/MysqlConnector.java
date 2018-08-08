@@ -19,8 +19,8 @@ public class MysqlConnector {
     //MySQL配置时的用户名
     private String user = "root";
     //MySQL配置时的密码
-    //private String password = "";
-    private String password = "e6jSWVLNyAg0";
+    private String password = "";
+    //private String password = "e6jSWVLNyAg0";
     
     private MysqlConnector (){
 		try {

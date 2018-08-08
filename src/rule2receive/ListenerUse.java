@@ -10,6 +10,9 @@ import java.io.InputStreamReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import net.contentobjects.jnotify.JNotifyListener;
 
@@ -66,17 +69,25 @@ public class ListenerUse implements JNotifyListener{
 		}
 		
 		String T_identifier = title[0];		
-		String T_time = title[1].split("\\.")[0];		
+		String T_time = title[1].split("\\.")[0];	
+		long T_time_stamp = 0;
+		try {
+			T_time_stamp = dateToStampForTitle(T_time);
+		} catch (ParseException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 
 		MysqlConnector mc = MysqlConnector.getInstance();
-		String sql = "INSERT INTO showdata_filetxt(fileName, store_time, t_identifier, t_time) " +
-				 " VALUES(?,?,?,?)";
+		String sql = "INSERT INTO showdata_filetxt(fileName, store_time, t_identifier, t_time, t_time_stamp) " +
+				 " VALUES(?,?,?,?,?)";
 		try {
 			PreparedStatement ps = mc.getPreparedStatement(sql);
 			ps.setString(1, name);
 			ps.setLong(2, store_time);
 			ps.setString(3, T_identifier);
 			ps.setString(4, T_time);
+			ps.setLong(5, T_time_stamp);
 			ps.executeUpdate();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -111,23 +122,32 @@ public class ListenerUse implements JNotifyListener{
 				String C_tmsi = content[1];
 				String C_fcn = content[2];
 				String C_time = content[3];
+				long C_time_stamp = 0;
 				String C_lon = content[4];
 				String C_lat = content[5];
+				try {
+					C_time_stamp = dateToStamp(C_time);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				//storing data into database
 				MysqlConnector mc1 = MysqlConnector.getInstance();
-				String sql1 = "INSERT INTO showdata_linetxt(store_time,t_identifier,t_time,c_imsi,c_tmsi,c_fcn,c_time,c_lon,c_lat,file_id) " +
-							 " VALUES(?,?,?,?,?,?,?,?,?,?)";
+				String sql1 = "INSERT INTO showdata_linetxt(store_time,t_identifier,t_time,t_time_stamp,c_imsi,c_tmsi,c_fcn,c_time,c_time_stamp,c_lon,c_lat,file_id) " +
+							 " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
 				PreparedStatement ps1 = mc1.getPreparedStatement(sql1);
 				ps1.setLong(1, store_time);
 				ps1.setString(2, T_identifier);
 				ps1.setString(3, T_time);
-				ps1.setString(4, C_imsi);
-				ps1.setString(5, C_tmsi);
-				ps1.setString(6, C_fcn);
-				ps1.setString(7, C_time);
-				ps1.setString(8, C_lon);
-				ps1.setString(9, C_lat);
-				ps1.setInt(10, fileid);
+				ps1.setLong(4, T_time_stamp);
+				ps1.setString(5, C_imsi);
+				ps1.setString(6, C_tmsi);
+				ps1.setString(7, C_fcn);
+				ps1.setString(8, C_time);
+				ps1.setLong(9, C_time_stamp);
+				ps1.setString(10, C_lon);
+				ps1.setString(11, C_lat);
+				ps1.setInt(12, fileid);
 				ps1.executeUpdate();
 			}
 		} catch (IOException e) {
@@ -145,6 +165,24 @@ public class ListenerUse implements JNotifyListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+    public static long dateToStamp(String s) throws ParseException{
+        String res;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(s);
+        long ts = date.getTime()/1000;
+        //res = String.valueOf(ts);
+        //return res;
+        return ts;
+    }
+    public static long dateToStampForTitle(String s) throws ParseException{
+        String res;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date date = simpleDateFormat.parse(s);
+        long ts = date.getTime()/1000;
+        //res = String.valueOf(ts);
+        //return res;
+        return ts;
     }
 }
 
