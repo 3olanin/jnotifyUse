@@ -77,10 +77,12 @@ public class ListenerUse implements JNotifyListener{
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
+		int machine_type = 2;
+		String default_value = "0";
 
 		MysqlConnector mc = MysqlConnector.getInstance();
-		String sql = "INSERT INTO showdata_filetxt(fileName, store_time, t_identifier, t_time, t_time_stamp) " +
-				 " VALUES(?,?,?,?,?)";
+		String sql = "INSERT INTO showData_filetxt(fileName, store_time, t_identifier, t_time, t_time_stamp, machine_type, t_mac, t_ip) " +
+				 " VALUES(?,?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement ps = mc.getPreparedStatement(sql);
 			ps.setString(1, name);
@@ -88,6 +90,9 @@ public class ListenerUse implements JNotifyListener{
 			ps.setString(3, T_identifier);
 			ps.setString(4, T_time);
 			ps.setLong(5, T_time_stamp);
+			ps.setInt(6, machine_type);
+			ps.setString(7, default_value);
+			ps.setString(8, default_value);
 			ps.executeUpdate();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -95,7 +100,7 @@ public class ListenerUse implements JNotifyListener{
 		}
 		
 		//get id
-		sql = "SELECT id from showdata_filetxt where fileName = ?";
+		sql = "SELECT id from showData_filetxt where fileName = ?";
 		int fileid = 1;
 		try {
 			PreparedStatement ps = mc.getPreparedStatement(sql);
@@ -133,8 +138,8 @@ public class ListenerUse implements JNotifyListener{
 				}
 				//storing data into database
 				MysqlConnector mc1 = MysqlConnector.getInstance();
-				String sql1 = "INSERT INTO showdata_linetxt(store_time,t_identifier,t_time,t_time_stamp,c_imsi,c_tmsi,c_fcn,c_time,c_time_stamp,c_lon,c_lat,file_id) " +
-							 " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+				String sql1 = "INSERT INTO showData_linetxt(store_time,t_identifier,t_time,t_time_stamp,c_imsi,c_tmsi,c_fcn,c_time,c_time_stamp,c_lon,c_lat,file_id,machine_type,t_mac,t_ip,c_mac,c_imei,c_rsrp,c_isp) " +
+							 " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				PreparedStatement ps1 = mc1.getPreparedStatement(sql1);
 				ps1.setLong(1, store_time);
 				ps1.setString(2, T_identifier);
@@ -148,6 +153,13 @@ public class ListenerUse implements JNotifyListener{
 				ps1.setString(10, C_lon);
 				ps1.setString(11, C_lat);
 				ps1.setInt(12, fileid);
+				ps1.setInt(13, machine_type);
+				ps1.setString(14, default_value);
+				ps1.setString(15, default_value);
+				ps1.setString(16, default_value);
+				ps1.setString(17, default_value);
+				ps1.setString(18, default_value);
+				ps1.setString(19, default_value);
 				ps1.executeUpdate();
 			}
 		} catch (IOException e) {

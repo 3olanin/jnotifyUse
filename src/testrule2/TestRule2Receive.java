@@ -1,4 +1,5 @@
-package rule2receive;
+package testrule2;
+
 
 
 import java.io.BufferedReader;
@@ -15,16 +16,16 @@ import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 
 
-public class Rule2Receive {
+public class TestRule2Receive {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		MysqlConnector mc = MysqlConnector.getInstance();
-		mc.connectMysql();
+		//MysqlConnector mc = MysqlConnector.getInstance();
+		//mc.connectMysql();
         System.err.println(System.getProperty("java.library.path"));
         System.err.println("开始监听目录下内容......");
         try {
-            Rule2Receive.watch();
+            TestRule2Receive.watch();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,22 +49,22 @@ public class Rule2Receive {
         boolean subTree = false;
  
         //开始监控
-        int watchID = JNotify.addWatch(path, mask, subTree, new ListenerUse());
+        int watchID = JNotify.addWatch(path, mask, subTree, new TestListenerUse());
  
         
         while(true) {
         	try {
-        		MysqlConnector mc = MysqlConnector.getInstance();
-        		String sql = "SELECT CURDATE() as date";
-        		try {
-        			PreparedStatement ps = mc.getPreparedStatement(sql);
-        			ResultSet rs = ps.executeQuery();
-        			rs.next();
-        			System.out.println(rs.getString("date"));
-        		} catch (SQLException e1) {
-        			// TODO Auto-generated catch block
-        			e1.printStackTrace();
-        		}
+//        		MysqlConnector mc = MysqlConnector.getInstance();
+//        		String sql = "SELECT CURDATE() as date";
+//        		try {
+//        			PreparedStatement ps = mc.getPreparedStatement(sql);
+//        			ResultSet rs = ps.executeQuery();
+//        			rs.next();
+//        			System.out.println(rs.getString("date"));
+//        		} catch (SQLException e1) {
+//        			// TODO Auto-generated catch block
+//        			e1.printStackTrace();
+//        		}
         		Thread.sleep(1000 *  60 * 60);
         		
         	}catch (InterruptedException e) {
